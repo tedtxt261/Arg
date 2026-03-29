@@ -1,0 +1,178 @@
+<!-- 🔴 RED OUTLINE CURSOR -->
+<style>
+#fakeCursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    border: 2px solid red;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+}
+</style>
+
+<!-- 👁 CURSOR -->
+<div id="fakeCursor"></div>
+
+<!-- 🔊 AUDIO -->
+<audio id="ambient" loop src="ambient.mp3"></audio>
+<audio id="whisper" src="whisper.mp3"></audio>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    const scrollBox = document.getElementById("scrollBox");
+    const morse = document.getElementById("morse");
+    const fakeCursor = document.getElementById("fakeCursor");
+
+    /* MORSE SCROLL */
+    if (scrollBox && morse) {
+        scrollBox.addEventListener("scroll", () => {
+            if (scrollBox.scrollLeft > 50) {
+                morse.style.opacity = 1;
+            }
+        });
+    }
+
+    /* CURSOR */
+    let cursorX = window.innerWidth / 2;
+    let cursorY = window.innerHeight / 2;
+
+    document.addEventListener("mousemove", (e) => {
+        cursorX = e.clientX;
+        cursorY = e.clientY;
+    });
+
+    document.addEventListener("touchmove", (e) => {
+        cursorX = e.touches[0].clientX;
+        cursorY = e.touches[0].clientY;
+    });
+
+    function updateCursor() {
+        if (fakeCursor) {
+            fakeCursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
+        }
+        requestAnimationFrame(updateCursor);
+    }
+    updateCursor();
+
+    /* 👁 RANDOM CURSOR MOVEMENT */
+    function randomMove() {
+        cursorX = Math.random() * window.innerWidth;
+        cursorY = Math.random() * window.innerHeight;
+        setTimeout(randomMove, Math.random()*5000+3000);
+    }
+    setTimeout(randomMove, 10000);
+});
+
+/* PASSWORD */
+function checkPassword() {
+    let input = document.getElementById("password").value;
+    let correctPassword = "_he was Whaching you_";
+
+    if (input === correctPassword) {
+        document.getElementById("content").style.display = "block";
+
+        let ambient = document.getElementById("ambient");
+        if (ambient) {
+            ambient.volume = 0.3;
+            ambient.play().catch(()=>{});
+        }
+
+        randomWhispers();
+        typeText("typing", "Access log opened...");
+        startPresence();
+
+    } else {
+        document.getElementById("message").innerText = "ACCESS DENIED";
+    }
+}
+
+/* TYPEWRITER */
+function typeText(id, text) {
+    let el = document.getElementById(id);
+    if (!el) return;
+
+    el.innerHTML = "";
+    let i = 0;
+
+    function typing() {
+        if (i < text.length) {
+            el.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, 40);
+        }
+    }
+    typing();
+}
+
+/* WHISPERS */
+function randomWhispers() {
+    let whisper = document.getElementById("whisper");
+    if (!whisper) return;
+
+    function play() {
+        whisper.currentTime = 0;
+        whisper.volume = 0.6;
+        whisper.play().catch(()=>{});
+        setTimeout(play, Math.random()*10000+5000);
+    }
+    play();
+}
+
+/* PRESENCE */
+function startPresence() {
+
+    setTimeout(()=>typeText("typing","Scanning user..."),2000);
+    setTimeout(()=>typeText("typing","Location detected."),4000);
+    setTimeout(()=>typeText("typing","Do not move."),6000);
+
+    let darkness = 0;
+    setInterval(()=>{
+        darkness += 0.01;
+        document.body.style.backgroundColor = `rgba(0,0,0,${darkness})`;
+    }, 500);
+
+    document.addEventListener("mousemove", (e)=>{
+        let img = document.getElementById("creepyImg");
+        if (!img) return;
+
+        let x = e.clientX / window.innerWidth;
+        let y = e.clientY / window.innerHeight;
+
+        img.style.transform = `translate(${x*10}px, ${y*10}px)`;
+    });
+}
+
+/* PAGE 2 */
+function openPage2() {
+    document.getElementById("page2").style.display = "block";
+
+    let img = document.getElementById("creepyImg");
+
+    if (img) {
+        setTimeout(()=>{
+            img.style.filter = "grayscale(100%) blur(3px)";
+        },1000);
+    }
+
+    setTimeout(()=>{
+        typeText("whisper","they noticed you first");
+    },2000);
+
+    setTimeout(()=>{
+        typeText("finalText","you stayed too long");
+    },5000);
+
+    setTimeout(()=>{
+        typeText("signText","no one cares about us anymore because the wachter is always here");
+    },7000);
+
+    let whisperAudio = document.getElementById("whisper");
+    if (whisperAudio) {
+        whisperAudio.currentTime = 0;
+        whisperAudio.volume = 0.8;
+        whisperAudio.play().catch(()=>{});
+    }
+}
+</script>
